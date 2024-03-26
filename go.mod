@@ -5,6 +5,7 @@ go 1.21.0
 require (
 	github.com/Microsoft/go-winio v0.6.1
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
+	github.com/blocklessnetwork/b7s v0.4.9
 	github.com/blocklessnetwork/b7s-attributes v0.0.0
 	github.com/cavaliergopher/grab/v3 v3.0.1
 	github.com/cockroachdb/pebble v1.0.0
@@ -145,7 +146,6 @@ require (
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/raulk/go-watchdog v1.3.0 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
-	github.com/smartystreets/assertions v1.13.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 // indirect
