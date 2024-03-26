@@ -1,7 +1,7 @@
 package executor
 
 import (
-	"github.com/blocklessnetwork/b7s/models/execute"
+	"github.com/RedBird96/b7s/models/execute"
 )
 
 type Limiter interface {

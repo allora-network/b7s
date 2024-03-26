@@ -14,10 +14,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/blocklessnetwork/b7s/models/blockless"
-	"github.com/blocklessnetwork/b7s/store"
-	"github.com/blocklessnetwork/b7s/testing/helpers"
-	"github.com/blocklessnetwork/b7s/testing/mocks"
+	"github.com/RedBird96/b7s/models/blockless"
+	"github.com/RedBird96/b7s/store"
+	"github.com/RedBird96/b7s/testing/helpers"
+	"github.com/RedBird96/b7s/testing/mocks"
 )
 
 func TestFunction_GetJSON(t *testing.T) {

@@ -13,8 +13,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/blocklessnetwork/b7s/executor/limits"
-	"github.com/blocklessnetwork/b7s/models/execute"
+	"github.com/RedBird96/b7s/executor/limits"
+	"github.com/RedBird96/b7s/models/execute"
 )
 
 const (

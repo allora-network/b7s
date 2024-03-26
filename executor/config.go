@@ -3,27 +3,27 @@ package executor
 import (
 	"github.com/spf13/afero"
 
-	"github.com/blocklessnetwork/b7s/models/blockless"
+	"github.com/RedBird96/b7s/models/blockless"
 )
 
 // defaultConfig used to create Executor.
 var defaultConfig = Config{
-	WorkDir:        "workspace",
-	RuntimeDir:     "",
-	ExecutableName: blockless.RuntimeCLI(),
-	FS:             afero.NewOsFs(),
-	Limiter:        &noopLimiter{},
+	WorkDir:         "workspace",
+	RuntimeDir:      "",
+	ExecutableName:  blockless.RuntimeCLI(),
+	FS:              afero.NewOsFs(),
+	Limiter:         &noopLimiter{},
 	DriversRootPath: "",
 }
 
 // Config represents the Executor configuration.
 type Config struct {
-	WorkDir        string   // directory where files needed for the execution are stored
-	RuntimeDir     string   // directory where the executable can be found
-	ExecutableName string   // name for the executable
-	DriversRootPath string // where are cgi drivers stored
-	FS             afero.Fs // FS accessor
-	Limiter        Limiter  // Resource limiter for executed processes
+	WorkDir         string   // directory where files needed for the execution are stored
+	RuntimeDir      string   // directory where the executable can be found
+	ExecutableName  string   // name for the executable
+	DriversRootPath string   // where are cgi drivers stored
+	FS              afero.Fs // FS accessor
+	Limiter         Limiter  // Resource limiter for executed processes
 }
 
 type Option func(*Config)

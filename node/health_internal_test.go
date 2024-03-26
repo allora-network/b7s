@@ -9,10 +9,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/blocklessnetwork/b7s/host"
-	"github.com/blocklessnetwork/b7s/models/blockless"
-	"github.com/blocklessnetwork/b7s/models/response"
-	"github.com/blocklessnetwork/b7s/testing/mocks"
+	"github.com/RedBird96/b7s/host"
+	"github.com/RedBird96/b7s/models/blockless"
+	"github.com/RedBird96/b7s/models/response"
+	"github.com/RedBird96/b7s/testing/mocks"
 )
 
 func TestNode_Health(t *testing.T) {

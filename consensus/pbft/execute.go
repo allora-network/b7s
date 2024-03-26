@@ -6,10 +6,10 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 
-	"github.com/blocklessnetwork/b7s/models/blockless"
-	"github.com/blocklessnetwork/b7s/models/codes"
-	"github.com/blocklessnetwork/b7s/models/execute"
-	"github.com/blocklessnetwork/b7s/models/response"
+	"github.com/RedBird96/b7s/models/blockless"
+	"github.com/RedBird96/b7s/models/codes"
+	"github.com/RedBird96/b7s/models/execute"
+	"github.com/RedBird96/b7s/models/response"
 )
 
 // Execute fullfils the consensus interface by inserting the request into the pipeline.

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/blocklessnetwork/b7s/consensus"
+	"github.com/RedBird96/b7s/consensus"
 )
 
 const (

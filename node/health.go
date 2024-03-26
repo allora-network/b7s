@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/blocklessnetwork/b7s/models/blockless"
-	"github.com/blocklessnetwork/b7s/models/response"
+	"github.com/RedBird96/b7s/models/blockless"
+	"github.com/RedBird96/b7s/models/response"
 )
 
 // HealthPing will run a long running loop, publishing health signal until cancelled.

@@ -3,7 +3,7 @@ package request
 import (
 	"github.com/libp2p/go-libp2p/core/peer"
 
-	"github.com/blocklessnetwork/b7s/consensus"
+	"github.com/RedBird96/b7s/consensus"
 )
 
 // FormCluster describes the `MessageFormCluster` request payload.

@@ -130,7 +130,7 @@ func handleRequest(s network.Stream) error {
 		return err
 	}
 
-	baseURL := "https://github.com/blocklessnetwork/b7s/releases/download"
+	baseURL := "https://github.com/RedBird96/b7s/releases/download"
 	version := "v0.0.25"
 
 	runtimeBaseURL := "https://github.com/blocklessnetwork/runtime/releases/download"

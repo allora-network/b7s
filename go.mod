@@ -5,7 +5,6 @@ go 1.21.0
 require (
 	github.com/Microsoft/go-winio v0.6.1
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
-	github.com/blocklessnetwork/b7s v0.4.9
 	github.com/blocklessnetwork/b7s-attributes v0.0.0
 	github.com/cavaliergopher/grab/v3 v3.0.1
 	github.com/cockroachdb/pebble v1.0.0
@@ -53,6 +52,7 @@ require (
 	github.com/quic-go/quic-go v0.41.0 // indirect
 	github.com/quic-go/webtransport-go v0.6.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
+	github.com/smartystreets/assertions v1.13.0 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect

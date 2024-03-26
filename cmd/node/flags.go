@@ -3,9 +3,9 @@ package main
 import (
 	"github.com/spf13/pflag"
 
-	"github.com/blocklessnetwork/b7s/config"
-	"github.com/blocklessnetwork/b7s/models/blockless"
-	"github.com/blocklessnetwork/b7s/node"
+	"github.com/RedBird96/b7s/config"
+	"github.com/RedBird96/b7s/models/blockless"
+	"github.com/RedBird96/b7s/node"
 )
 
 // Default values.
