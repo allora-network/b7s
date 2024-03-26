@@ -3,6 +3,7 @@ package node
 import (
 	"context"
 	"fmt"
+	"github.com/RedBird96/b7s/models/response"
 	"slices"
 	"sync"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/RedBird96/b7s/models/blockless"
 	"github.com/RedBird96/b7s/node/internal/waitmap"
 	"github.com/blocklessnetwork/b7s-attributes/attributes"
+	pubsub "github.com/libp2p/go-libp2p-pubsub"
 )
 
 // Node is the entity that actually provides the main Blockless node functionality.
@@ -46,10 +48,16 @@ type Node struct {
 
 	executeResponses   *waitmap.WaitMap
 	consensusResponses *waitmap.WaitMap
+
+	pbftExecuteResponse map[string]response.Execute
+	reportingPeers      map[string][]peer.ID
+	room                *pubsub.Topic
 }
 
 // New creates a new Node.
-func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore, options ...Option) (*Node, error) {
+func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore, ro string, options ...Option) (*Node, error) {
+
+	ctx := context.Background()
 
 	// Initialize config.
 	cfg := DefaultConfig
@@ -68,6 +76,15 @@ func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore
 		topics:  make(map[string]*topicInfo),
 	}
 
+	gossipSub, err := pubsub.NewGossipSub(ctx, host)
+	if err != nil {
+		return nil, fmt.Errorf("could not create Node: %w", err)
+	}
+	room, err := gossipSub.Join(ro)
+	if err != nil {
+		return nil, fmt.Errorf("could not create Node: %w", err)
+	}
+
 	n := &Node{
 		cfg: cfg,
 
@@ -80,10 +97,13 @@ func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore
 		sema:      make(chan struct{}, cfg.Concurrency),
 		subgroups: subgroups,
 
-		rollCall:           newQueue(rollCallQueueBufferSize),
-		clusters:           make(map[string]consensusExecutor),
-		executeResponses:   waitmap.New(),
-		consensusResponses: waitmap.New(),
+		rollCall:            newQueue(rollCallQueueBufferSize),
+		clusters:            make(map[string]consensusExecutor),
+		executeResponses:    waitmap.New(),
+		consensusResponses:  waitmap.New(),
+		pbftExecuteResponse: make(map[string]response.Execute),
+		reportingPeers:      make(map[string][]peer.ID),
+		room:                room,
 	}
 
 	if cfg.LoadAttributes {
@@ -96,7 +116,7 @@ func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore
 		n.log.Info().Interface("attributes", n.attributes).Msg("node loaded attributes")
 	}
 
-	err := n.ValidateConfig()
+	err = n.ValidateConfig()
 	if err != nil {
 		return nil, fmt.Errorf("node configuration is not valid: %w", err)
 	}

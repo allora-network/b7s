@@ -18,7 +18,8 @@ type Execute struct {
 	execute.Request // execute request is embedded.
 
 	// RequestID may be set initially, if the execution request is relayed via roll-call.
-	RequestID string `json:"request_id,omitempty"`
+	RequestID      string    `json:"request_id,omitempty"`
+	ReportingPeers []peer.ID `json:"reporting_peers,omitempty"`
 
 	// Execution request timestamp is a factor for PBFT.
 	Timestamp time.Time `json:"timestamp,omitempty"`

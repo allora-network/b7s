@@ -14,7 +14,7 @@ import (
 )
 
 // gatherExecutionResultsPBFT collects execution results from a PBFT cluster. This means f+1 identical results.
-func (n *Node) gatherExecutionResultsPBFT(ctx context.Context, requestID string, peers []peer.ID) execute.ResultMap {
+func (n *Node) gatherExecutionResultsPBFT_Remove(ctx context.Context, requestID string, peers []peer.ID) execute.ResultMap { // todo remove
 
 	exctx, exCancel := context.WithTimeout(ctx, n.cfg.ExecutionTimeout)
 	defer exCancel()
@@ -85,7 +85,94 @@ func (n *Node) gatherExecutionResultsPBFT(ctx context.Context, requestID string,
 			result.peers = append(result.peers, sender)
 			if uint(len(result.peers)) >= count {
 				n.log.Info().Str("request", requestID).Int("peers", len(peers)).Uint("matching_results", count).Msg("have enough matching results")
-				exCancel()
+				//exCancel()
+
+				for _, peer := range result.peers {
+					out[peer] = result.result
+				}
+			}
+		}(rp)
+	}
+
+	wg.Wait()
+
+	return out
+}
+
+// gatherExecutionResultsPBFT collects execution results from a PBFT cluster. This means f+1 identical results.
+func (n *Node) gatherExecutionResultsPBFT(ctx context.Context, requestID string, peers []peer.ID) execute.ResultMap {
+
+	//exctx, exCancel := context.WithTimeout(ctx, n.cfg.ExecutionTimeout)
+	//defer exCancel()
+
+	type aggregatedResult struct {
+		result execute.Result
+		peers  []peer.ID
+	}
+
+	var (
+		count = pbft.MinClusterResults(uint(len(peers)))
+		lock  sync.Mutex
+		wg    sync.WaitGroup
+
+		results                   = make(map[string]aggregatedResult)
+		out     execute.ResultMap = make(map[peer.ID]execute.Result)
+	)
+
+	wg.Add(len(peers))
+
+	for _, rp := range peers {
+		go func(sender peer.ID) {
+			defer wg.Done()
+
+			key := executionResultKey(requestID, sender)
+			//res, ok := n.executeResponses.WaitFor(exctx, key)
+			res, ok := n.pbftExecuteResponse[key]
+			if !ok {
+				return
+			}
+
+			n.log.Info().Str("peer", sender.String()).Str("request", requestID).Msg("accounted execution response from peer")
+
+			//er := res.(response.Execute)
+
+			pub, err := sender.ExtractPublicKey()
+			if err != nil {
+				log.Error().Err(err).Msg("could not derive public key from peer ID")
+				return
+			}
+
+			err = res.VerifySignature(pub)
+			if err != nil {
+				log.Error().Err(err).Msg("could not verify signature of an execution response")
+				return
+			}
+
+			exres, ok := res.Results[sender]
+			if !ok {
+				return
+			}
+
+			lock.Lock()
+			defer lock.Unlock()
+
+			// Equality means same result and same timestamp.
+			reskey := fmt.Sprintf("%+#v-%s", exres.Result, res.PBFT.RequestTimestamp.String())
+			result, ok := results[reskey]
+			if !ok {
+				results[reskey] = aggregatedResult{
+					result: exres,
+					peers: []peer.ID{
+						sender,
+					},
+				}
+				return
+			}
+
+			result.peers = append(result.peers, sender)
+			if uint(len(result.peers)) >= count {
+				n.log.Info().Str("request", requestID).Int("peers", len(peers)).Uint("matching_results", count).Msg("have enough matching results")
+				//exCancel()
 
 				for _, peer := range result.peers {
 					out[peer] = result.result

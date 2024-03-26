@@ -119,17 +119,20 @@ func (n *Node) headExecute(ctx context.Context, requestID string, req execute.Re
 		// One variant I tried is waiting on the execution to be done on the leader (using a timed wait on the execution response) and starting raft shutdown after.
 		// However, this can happen too fast and the execution request might not have been propagated to all of the nodes in the cluster, but "only" to a majority.
 		// Doing this here allows for more wiggle room and ~probably~ all nodes will have seen the request so far.
-		defer n.disbandCluster(requestID, reportingPeers)
+
+		// Will disband once executed response
+		// defer n.disbandCluster(requestID, reportingPeers)
 	}
 
 	// Phase 3. - Request execution.
 
 	// Send the execution request to peers in the cluster. Non-leaders will drop the request.
 	reqExecute := request.Execute{
-		Type:      blockless.MessageExecute,
-		Request:   req,
-		RequestID: requestID,
-		Timestamp: time.Now().UTC(),
+		Type:           blockless.MessageExecute,
+		Request:        req,
+		RequestID:      requestID,
+		ReportingPeers: reportingPeers,
+		Timestamp:      time.Now().UTC(),
 	}
 
 	// If we're working with PBFT, sign the request.
@@ -149,7 +152,7 @@ func (n *Node) headExecute(ctx context.Context, requestID string, req execute.Re
 
 	var results execute.ResultMap
 	if consensusAlgo == consensus.PBFT {
-		results = n.gatherExecutionResultsPBFT(ctx, requestID, reportingPeers)
+		results = n.gatherExecutionResultsPBFT_Remove(ctx, requestID, reportingPeers)
 
 		log.Info().Msg("received PBFT execution responses")
 
