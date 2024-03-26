@@ -51,7 +51,8 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 	}
 	res.From = from
 
-	n.log.Debug().Str("request", res.RequestID).Str("from", from.String()).Str("function", res.FunctionID).Msg("received execution response to primary worker")
+	de := fmt.Sprintf("pbft :%d, peers%d", len(n.pbftExecuteResponse), len(n.reportingPeers[res.RequestID])-1)
+	n.log.Debug().Str("request", res.RequestID).Str("from", from.String()).Str("function", res.FunctionID).Str("lens:", de).Msg("received execution response to primary worker")
 
 	key := executionResultKey(res.RequestID, from)
 	n.pbftExecuteResponse[key] = res
