@@ -51,12 +51,13 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 	}
 	res.From = from
 
-	de := fmt.Sprintf("pbft :%d, peers%d", len(n.pbftExecuteResponse), len(n.reportingPeers[res.RequestID])-1)
-	n.log.Debug().Str("request", res.RequestID).Str("from", from.String()).Str("function", res.FunctionID).Str("lens:", de).Msg("received execution response to primary worker")
-
 	key := executionResultKey(res.RequestID, from)
 	n.pbftExecuteResponse[key] = res
 	if len(n.pbftExecuteResponse) >= len(n.reportingPeers[res.RequestID])-1 {
+
+		de := fmt.Sprintf("pbft :%d, peers%d", len(n.pbftExecuteResponse), len(n.reportingPeers[res.RequestID])-1)
+		n.log.Debug().Str("request", res.RequestID).Str("from", from.String()).Str("function", res.FunctionID).Str("lens:", de).Msg("received execution response to primary worker")
+
 		out := n.gatherExecutionResultsPBFT(res.RequestID, n.reportingPeers[res.RequestID])
 		bytes, _ := out.MarshalJSON()
 		n.room.Publish(n.ctx, bytes)

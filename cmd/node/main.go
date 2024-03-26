@@ -216,16 +216,16 @@ func run() int {
 		opts = append(opts, node.WithTopics(cfg.Topics))
 	}
 
+	// Create the main context.
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	// Instantiate node.
-	node, err := node.New(log, host, peerstore, fstore, opts...)
+	node, err := node.New(log, ctx, host, peerstore, fstore, "", opts...)
 	if err != nil {
 		log.Error().Err(err).Msg("could not create node")
 		return failure
 	}
-
-	// Create the main context.
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	done := make(chan struct{})
 	failed := make(chan struct{})
