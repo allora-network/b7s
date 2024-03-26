@@ -121,6 +121,8 @@ func (n *Node) getHandler(msgType string) HandlerFunc {
 		return n.processHealthCheck
 	case blockless.MessageExecuteResponse:
 		return n.processExecuteResponse
+	case blockless.MessageExecuteResponseToPrimary:
+		return n.processExecuteResponseToPrimary
 	case blockless.MessageRollCall:
 		return n.processRollCall
 	case blockless.MessageRollCallResponse:

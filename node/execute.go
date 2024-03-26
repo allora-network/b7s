@@ -40,6 +40,26 @@ func (n *Node) processExecuteResponse(ctx context.Context, from peer.ID, payload
 	return nil
 }
 
+func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID, payload []byte) error {
+
+	// Unpack the message.
+	var res response.Execute
+	err := json.Unmarshal(payload, &res)
+	if err != nil {
+		return fmt.Errorf("could not unpack execute response: %w", err)
+	}
+	res.From = from
+
+	n.log.Debug().Str("request", res.RequestID).Str("from", from.String()).Msg("received execution response to primary worker")
+
+	key := executionResultKey(res.RequestID, from)
+	n.executeResponses.Set(key, res)
+
+	//n.gatherExecutionResultsPBFT(ctx, res.RequestID, nil)
+
+	return nil
+}
+
 func executionResultKey(requestID string, peer peer.ID) string {
 	return requestID + "/" + peer.String()
 }
