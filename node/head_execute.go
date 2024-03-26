@@ -152,18 +152,18 @@ func (n *Node) headExecute(ctx context.Context, requestID string, req execute.Re
 
 	var results execute.ResultMap
 	if consensusAlgo == consensus.PBFT {
-		results = n.gatherExecutionResultsPBFT_Remove(ctx, requestID, reportingPeers)
+		//results = n.gatherExecutionResultsPBFT_Remove(ctx, requestID, reportingPeers)
 
 		log.Info().Msg("received PBFT execution responses")
 
 		retcode := codes.OK
 		// Use the return code from the execution as the return code.
-		for _, res := range results {
-			retcode = res.Code
-			break
-		}
+		//for _, res := range results {
+		//	retcode = res.Code
+		//	break
+		//}
 
-		return retcode, results, cluster, nil
+		return retcode, nil, cluster, nil
 	}
 
 	results = n.gatherExecutionResults(ctx, requestID, reportingPeers)
