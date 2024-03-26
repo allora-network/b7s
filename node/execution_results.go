@@ -100,10 +100,7 @@ func (n *Node) gatherExecutionResultsPBFT_Remove(ctx context.Context, requestID 
 }
 
 // gatherExecutionResultsPBFT collects execution results from a PBFT cluster. This means f+1 identical results.
-func (n *Node) gatherExecutionResultsPBFT(ctx context.Context, requestID string, peers []peer.ID) execute.ResultMap {
-
-	//exctx, exCancel := context.WithTimeout(ctx, n.cfg.ExecutionTimeout)
-	//defer exCancel()
+func (n *Node) gatherExecutionResultsPBFT(requestID string, peers []peer.ID) execute.ResultMap {
 
 	type aggregatedResult struct {
 		result execute.Result
@@ -126,7 +123,6 @@ func (n *Node) gatherExecutionResultsPBFT(ctx context.Context, requestID string,
 			defer wg.Done()
 
 			key := executionResultKey(requestID, sender)
-			//res, ok := n.executeResponses.WaitFor(exctx, key)
 			res, ok := n.pbftExecuteResponse[key]
 			if !ok {
 				return

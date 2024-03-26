@@ -27,6 +27,7 @@ import (
 // delegate the execution to the chosend Worker Node.
 type Node struct {
 	cfg Config
+	ctx context.Context
 
 	log      zerolog.Logger
 	host     *host.Host
@@ -55,9 +56,7 @@ type Node struct {
 }
 
 // New creates a new Node.
-func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore, ro string, options ...Option) (*Node, error) {
-
-	ctx := context.Background()
+func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore PeerStore, fstore FStore, ro string, options ...Option) (*Node, error) {
 
 	// Initialize config.
 	cfg := DefaultConfig
@@ -87,6 +86,7 @@ func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore
 
 	n := &Node{
 		cfg: cfg,
+		ctx: ctx,
 
 		log:      log.With().Str("component", "node").Logger(),
 		host:     host,

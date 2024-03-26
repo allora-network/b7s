@@ -56,9 +56,9 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 	key := executionResultKey(res.RequestID, from)
 	n.pbftExecuteResponse[key] = res
 	if len(n.pbftExecuteResponse) >= len(n.reportingPeers[res.RequestID])-1 {
-		out := n.gatherExecutionResultsPBFT(ctx, res.RequestID, n.reportingPeers[res.RequestID])
+		out := n.gatherExecutionResultsPBFT(res.RequestID, n.reportingPeers[res.RequestID])
 		bytes, _ := out.MarshalJSON()
-		n.room.Publish(ctx, bytes)
+		n.room.Publish(n.ctx, bytes)
 		n.log.Debug().Str("data", aggregate.Aggregate(out)[0].Result.Stdout).Msg("Published pbft response")
 		defer n.disbandCluster(res.RequestID, n.reportingPeers[res.RequestID])
 	}
