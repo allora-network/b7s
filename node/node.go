@@ -16,7 +16,6 @@ import (
 	"github.com/RedBird96/b7s/models/blockless"
 	"github.com/RedBird96/b7s/node/internal/waitmap"
 	"github.com/blocklessnetwork/b7s-attributes/attributes"
-	pubsub "github.com/libp2p/go-libp2p-pubsub"
 )
 
 // Node is the entity that actually provides the main Blockless node functionality.
@@ -51,7 +50,6 @@ type Node struct {
 
 	pbftExecuteResponse map[string]response.Execute
 	reportingPeers      map[string][]peer.ID
-	room                *pubsub.Topic
 	comChannel          chan execute.ResultMap
 }
 
