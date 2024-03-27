@@ -75,15 +75,6 @@ func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore
 		topics:  make(map[string]*topicInfo),
 	}
 
-	//gossipSub, err := pubsub.NewGossipSub(ctx, host)
-	//if err != nil {
-	//	return nil, fmt.Errorf("could not create Node: %w", err)
-	//}
-	//room, err := gossipSub.Join(ro)
-	//if err != nil {
-	//	return nil, fmt.Errorf("could not create Node: %w", err)
-	//}
-
 	n := &Node{
 		cfg:      cfg,
 		log:      log.With().Str("component", "node").Logger(),

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/RedBird96/b7s/node/aggregate"
 	"strings"
 
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -54,15 +53,8 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 	key := executionResultKey(res.RequestID, from)
 	n.pbftExecuteResponse[key] = res
 	if len(n.reportingPeers[res.RequestID]) > 0 && len(n.pbftExecuteResponse) >= len(n.reportingPeers[res.RequestID])-1 {
-
-		de := fmt.Sprintf("pbft :%d, peers%d", len(n.pbftExecuteResponse), len(n.reportingPeers[res.RequestID])-1)
-		n.log.Debug().Str("request", res.RequestID).Str("from", from.String()).Str("function", res.FunctionID).Str("lens:", de).Msg("received execution response to primary worker")
-
 		out := n.gatherExecutionResultsPBFT(res.RequestID, n.reportingPeers[res.RequestID])
-		//bytes, _ := out.MarshalJSON()
-		//go n.room.Publish(n.ctx, bytes)
 		n.comChannel <- out
-		n.log.Debug().Str("Data", aggregate.Aggregate(out)[0].Result.Stdout).Msg("Published pbft response")
 		n.disbandCluster(res.RequestID, n.reportingPeers[res.RequestID])
 		n.pbftExecuteResponse = make(map[string]response.Execute)
 	}

@@ -127,8 +127,6 @@ func (n *Node) executeRollCall(
 		return nil, fmt.Errorf("could not publish roll call: %w", err)
 	}
 
-	log.Info().Msg("roll call published")
-
 	// Limit for how long we wait for responses.
 	t := n.cfg.RollCallTimeout
 	if timeout > 0 {

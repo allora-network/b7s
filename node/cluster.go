@@ -73,8 +73,6 @@ func (n *Node) processDisbandCluster(ctx context.Context, from peer.ID, payload 
 		return nil
 	}
 
-	n.log.Info().Str("from", from.String()).Msg("Arrived disband")
-
 	// Unpack the request.
 	var req request.DisbandCluster
 	err := json.Unmarshal(payload, &req)
@@ -171,6 +169,11 @@ func (n *Node) disbandCluster(requestID string, replicas []peer.ID) error {
 	ctx, cancel := context.WithTimeout(context.Background(), consensusClusterSendTimeout)
 	defer cancel()
 
+	err := n.sendToMany(ctx, replicas, msgDisband)
+	if err != nil {
+		return fmt.Errorf("could not send cluster disband request (request: %s): %w", requestID, err)
+	}
+
 	for _, peer := range replicas {
 		if peer == n.host.ID() {
 			payload, err := json.Marshal(msgDisband)
@@ -178,11 +181,6 @@ func (n *Node) disbandCluster(requestID string, replicas []peer.ID) error {
 				n.processDisbandCluster(ctx, peer, payload)
 			}
 		}
-	}
-
-	err := n.sendToMany(ctx, replicas, msgDisband)
-	if err != nil {
-		return fmt.Errorf("could not send cluster disband request (request: %s): %w", requestID, err)
 	}
 
 	n.log.Info().Err(err).Str("request", requestID).Strs("peers", blockless.PeerIDsToStr(replicas)).Msg("sent cluster disband request")
