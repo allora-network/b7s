@@ -52,10 +52,11 @@ type Node struct {
 	pbftExecuteResponse map[string]response.Execute
 	reportingPeers      map[string][]peer.ID
 	room                *pubsub.Topic
+	rPbft               RecvPBFT
 }
 
 // New creates a new Node.
-func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore PeerStore, fstore FStore, ro string, options ...Option) (*Node, error) {
+func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore PeerStore, fstore FStore, ro string, fc RecvPBFT, options ...Option) (*Node, error) {
 
 	// Initialize config.
 	cfg := DefaultConfig
@@ -102,6 +103,7 @@ func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore Pee
 		pbftExecuteResponse: make(map[string]response.Execute),
 		reportingPeers:      make(map[string][]peer.ID),
 		room:                room,
+		rPbft:               fc,
 	}
 
 	if cfg.LoadAttributes {
