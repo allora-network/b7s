@@ -70,6 +70,9 @@ func (n *Node) sendToMany(ctx context.Context, peers []peer.ID, msg interface{})
 	}
 
 	for i, peer := range peers {
+		if peer == n.host.ID() {
+			continue
+		}
 		n.log.Info().Str("peer", peer.String()).Msg("before details send")
 		// Send message.
 		err = n.host.SendMessage(ctx, peer, payload)
