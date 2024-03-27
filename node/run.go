@@ -73,8 +73,14 @@ func (n *Node) Run(ctx context.Context) error {
 					break
 				}
 
+				msgType, err := getMessageType(msg.Data)
+				if err != nil {
+					fmt.Errorf("could not determine message type: %w", err)
+					break
+				}
+
 				// Skip messages we published.
-				if msg.ReceivedFrom == n.host.ID() {
+				if msg.ReceivedFrom == n.host.ID() && msgType != blockless.MessageExecuteResponseToPrimary {
 					continue
 				}
 
