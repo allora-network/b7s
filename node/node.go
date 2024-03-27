@@ -53,7 +53,7 @@ type Node struct {
 	pbftExecuteResponse map[string]response.Execute
 	reportingPeers      map[string][]peer.ID
 	room                *pubsub.Topic
-	pbftCh              chan execute.ResultMap
+	comChannel          chan execute.ResultMap
 }
 
 // New creates a new Node.
@@ -76,14 +76,14 @@ func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore Pee
 		topics:  make(map[string]*topicInfo),
 	}
 
-	gossipSub, err := pubsub.NewGossipSub(ctx, host)
-	if err != nil {
-		return nil, fmt.Errorf("could not create Node: %w", err)
-	}
-	room, err := gossipSub.Join(ro)
-	if err != nil {
-		return nil, fmt.Errorf("could not create Node: %w", err)
-	}
+	//gossipSub, err := pubsub.NewGossipSub(ctx, host)
+	//if err != nil {
+	//	return nil, fmt.Errorf("could not create Node: %w", err)
+	//}
+	//room, err := gossipSub.Join(ro)
+	//if err != nil {
+	//	return nil, fmt.Errorf("could not create Node: %w", err)
+	//}
 
 	n := &Node{
 		cfg:      cfg,
@@ -103,8 +103,8 @@ func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore Pee
 		consensusResponses:  waitmap.New(),
 		pbftExecuteResponse: make(map[string]response.Execute),
 		reportingPeers:      make(map[string][]peer.ID),
-		room:                room,
-		//pbftCh:              ch,
+		//room:                room,
+		comChannel: make(chan execute.ResultMap),
 	}
 
 	if cfg.LoadAttributes {
@@ -117,7 +117,7 @@ func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore Pee
 		n.log.Info().Interface("attributes", n.attributes).Msg("node loaded attributes")
 	}
 
-	err = n.ValidateConfig()
+	err := n.ValidateConfig()
 	if err != nil {
 		return nil, fmt.Errorf("node configuration is not valid: %w", err)
 	}
@@ -167,6 +167,10 @@ func (n *Node) getHandler(msgType string) HandlerFunc {
 			return ErrUnsupportedMessage
 		}
 	}
+}
+
+func (n *Node) CommunicatorAppLayer() chan execute.ResultMap {
+	return n.comChannel
 }
 
 func newRequestID() (string, error) {

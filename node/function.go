@@ -1,9 +1,5 @@
 package node
 
-import "github.com/RedBird96/b7s/models/execute"
-
-type RecvPBFT func(execute.ResultMap)
-
 // FStore provides retrieval of function manifest.
 type FStore interface {
 	// Install will install a function based on the address and CID.
