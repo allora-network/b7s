@@ -73,9 +73,8 @@ func (n *Node) Run(ctx context.Context) error {
 					break
 				}
 
-				msgType, _ := getMessageType(msg.Data)
 				// Skip messages we published.
-				if msg.ReceivedFrom == n.host.ID() && msgType != blockless.MessageExecuteResponseToPrimary {
+				if msg.ReceivedFrom == n.host.ID() {
 					continue
 				}
 
