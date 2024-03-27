@@ -52,7 +52,7 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 
 	key := executionResultKey(res.RequestID, from)
 	n.pbftExecuteResponse[key] = res
-	if len(n.reportingPeers[res.RequestID]) > 0 && len(n.pbftExecuteResponse) >= len(n.reportingPeers[res.RequestID]) {
+	if len(n.reportingPeers[res.RequestID]) > 0 && len(n.pbftExecuteResponse) >= len(n.reportingPeers[res.RequestID])-1 {
 		out := n.gatherExecutionResultsPBFT(res.RequestID, n.reportingPeers[res.RequestID])
 		result := codes.OK
 		if len(out) == 0 {
