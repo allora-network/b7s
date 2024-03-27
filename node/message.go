@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/core/peer"
 )
@@ -71,8 +70,10 @@ func (n *Node) sendToMany(ctx context.Context, peers []peer.ID, msg interface{})
 	}
 
 	for i, peer := range peers {
+		n.log.Info().Str("peer", peer.String()).Msg("before details send")
 		// Send message.
 		err = n.host.SendMessage(ctx, peer, payload)
+		n.log.Info().Str("peer", peer.String()).Msg("after details send")
 		if err != nil {
 			return fmt.Errorf("could not send message to peer (id: %v, peer %d out of %d): %w", peer, i, len(peers), err)
 		}
