@@ -114,6 +114,9 @@ func (r *Replica) execute(view uint, sequence uint, digest string) error {
 	if err != nil {
 		return fmt.Errorf("could not sign execution request: %w", err)
 	}
+	if r.host.ID() == r.primaryReplicaID() {
+		return nil
+	}
 
 	log.Log().Msgf("Primary Peer %s", r.primaryReplicaID().String())
 	err = r.send(r.primaryReplicaID(), msg, blockless.ProtocolID)
