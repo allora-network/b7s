@@ -63,7 +63,7 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 			break
 		}
 		send := &ChanData{
-			res:        string(result),
+			res:        result,
 			functionId: res.FunctionID,
 			requestId:  res.RequestID,
 			topic:      n.topics[res.RequestID],
