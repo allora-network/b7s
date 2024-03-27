@@ -171,6 +171,15 @@ func (n *Node) disbandCluster(requestID string, replicas []peer.ID) error {
 	ctx, cancel := context.WithTimeout(context.Background(), consensusClusterSendTimeout)
 	defer cancel()
 
+	for _, peer := range replicas {
+		if peer == n.host.ID() {
+			payload, err := json.Marshal(msgDisband)
+			if err == nil {
+				n.processDisbandCluster(ctx, peer, payload)
+			}
+		}
+	}
+
 	err := n.sendToMany(ctx, replicas, msgDisband)
 	if err != nil {
 		return fmt.Errorf("could not send cluster disband request (request: %s): %w", requestID, err)
