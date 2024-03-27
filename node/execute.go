@@ -62,6 +62,7 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 		//n.room.Publish(ctx, bytes)
 		n.log.Debug().Msg("Published pbft response")
 		n.disbandCluster(res.RequestID, n.reportingPeers[res.RequestID])
+		n.pbftExecuteResponse = make(map[string]response.Execute)
 	}
 
 	return nil
