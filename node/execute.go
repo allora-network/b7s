@@ -52,7 +52,7 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 
 	key := executionResultKey(res.RequestID, from)
 	n.pbftExecuteResponse[key] = res
-	if len(n.pbftExecuteResponse) >= len(n.reportingPeers[res.RequestID])-1 {
+	if len(n.reportingPeers[res.RequestID]) > 0 && len(n.pbftExecuteResponse) >= len(n.reportingPeers[res.RequestID])-1 {
 
 		de := fmt.Sprintf("pbft :%d, peers%d", len(n.pbftExecuteResponse), len(n.reportingPeers[res.RequestID])-1)
 		n.log.Debug().Str("request", res.RequestID).Str("from", from.String()).Str("function", res.FunctionID).Str("lens:", de).Msg("received execution response to primary worker")
@@ -61,7 +61,7 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 		//bytes, _ := out.MarshalJSON()
 		//n.room.Publish(ctx, bytes)
 		n.log.Debug().Msg("Published pbft response")
-		defer n.disbandCluster(res.RequestID, n.reportingPeers[res.RequestID])
+		n.disbandCluster(res.RequestID, n.reportingPeers[res.RequestID])
 	}
 
 	return nil
