@@ -28,7 +28,6 @@ import (
 // delegate the execution to the chosend Worker Node.
 type Node struct {
 	cfg      Config
-	ctx      context.Context
 	log      zerolog.Logger
 	host     *host.Host
 	executor blockless.Executor
@@ -57,7 +56,7 @@ type Node struct {
 }
 
 // New creates a new Node.
-func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore PeerStore, fstore FStore, ro string, ch chan execute.ResultMap, options ...Option) (*Node, error) {
+func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore, options ...Option) (*Node, error) {
 
 	// Initialize config.
 	cfg := DefaultConfig
@@ -87,7 +86,6 @@ func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore Pee
 
 	n := &Node{
 		cfg:      cfg,
-		ctx:      ctx,
 		log:      log.With().Str("component", "node").Logger(),
 		host:     host,
 		fstore:   fstore,
@@ -103,8 +101,7 @@ func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore Pee
 		consensusResponses:  waitmap.New(),
 		pbftExecuteResponse: make(map[string]response.Execute),
 		reportingPeers:      make(map[string][]peer.ID),
-		//room:                room,
-		comChannel: make(chan execute.ResultMap),
+		comChannel:          make(chan execute.ResultMap, 1),
 	}
 
 	if cfg.LoadAttributes {
