@@ -60,7 +60,7 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 
 		out := n.gatherExecutionResultsPBFT(res.RequestID, n.reportingPeers[res.RequestID])
 		bytes, _ := out.MarshalJSON()
-		n.room.Publish(n.ctx, bytes)
+		go n.room.Publish(n.ctx, bytes)
 		//n.pbftCh <- out
 		n.log.Debug().Str("Data", aggregate.Aggregate(out)[0].Result.Stdout).Msg("Published pbft response")
 		n.disbandCluster(res.RequestID, n.reportingPeers[res.RequestID])

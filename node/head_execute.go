@@ -104,6 +104,7 @@ func (n *Node) headExecute(ctx context.Context, requestID string, req execute.Re
 		Peers: reportingPeers,
 	}
 
+	log.Log().Strs("reportingPeers", blockless.PeerIDsToStr(reportingPeers)).Msg("Result of reportingPeers")
 	// Phase 2. - Request cluster formation, if we need consensus.
 	if consensusRequired(consensusAlgo) {
 
