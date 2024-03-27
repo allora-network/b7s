@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/RedBird96/b7s/node/aggregate"
 	"strings"
 
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -61,7 +60,7 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 		out := n.gatherExecutionResultsPBFT(res.RequestID, n.reportingPeers[res.RequestID])
 		bytes, _ := out.MarshalJSON()
 		n.room.Publish(n.ctx, bytes)
-		n.log.Debug().Str("data", aggregate.Aggregate(out)[0].Result.Stdout).Msg("Published pbft response")
+		n.log.Debug().Msg("Published pbft response")
 		defer n.disbandCluster(res.RequestID, n.reportingPeers[res.RequestID])
 	}
 
