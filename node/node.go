@@ -26,8 +26,8 @@ import (
 // On the other hand, a Head Node will issue a roll call and eventually
 // delegate the execution to the chosend Worker Node.
 type Node struct {
-	cfg Config
-
+	cfg      Config
+	ctx      context.Context
 	log      zerolog.Logger
 	host     *host.Host
 	executor blockless.Executor
@@ -74,18 +74,18 @@ func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore Pee
 		topics:  make(map[string]*topicInfo),
 	}
 
-	//gossipSub, err := pubsub.NewGossipSub(ctx, host)
-	//if err != nil {
-	//	return nil, fmt.Errorf("could not create Node: %w", err)
-	//}
-	//room, err := gossipSub.Join(ro)
-	//if err != nil {
-	//	return nil, fmt.Errorf("could not create Node: %w", err)
-	//}
+	gossipSub, err := pubsub.NewGossipSub(ctx, host)
+	if err != nil {
+		return nil, fmt.Errorf("could not create Node: %w", err)
+	}
+	room, err := gossipSub.Join(ro)
+	if err != nil {
+		return nil, fmt.Errorf("could not create Node: %w", err)
+	}
 
 	n := &Node{
-		cfg: cfg,
-
+		cfg:      cfg,
+		ctx:      ctx,
 		log:      log.With().Str("component", "node").Logger(),
 		host:     host,
 		fstore:   fstore,
@@ -101,6 +101,7 @@ func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore Pee
 		consensusResponses:  waitmap.New(),
 		pbftExecuteResponse: make(map[string]response.Execute),
 		reportingPeers:      make(map[string][]peer.ID),
+		room:                room,
 	}
 
 	if cfg.LoadAttributes {
@@ -113,7 +114,7 @@ func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore Pee
 		n.log.Info().Interface("attributes", n.attributes).Msg("node loaded attributes")
 	}
 
-	err := n.ValidateConfig()
+	err = n.ValidateConfig()
 	if err != nil {
 		return nil, fmt.Errorf("node configuration is not valid: %w", err)
 	}
