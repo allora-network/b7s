@@ -27,6 +27,7 @@ func (n *Node) workerProcessExecute(ctx context.Context, from peer.ID, payload [
 
 	requestID := req.RequestID
 	n.reportingPeers[requestID] = req.ReportingPeers
+	n.topics[requestID] = req.Topic
 	if requestID == "" {
 		return fmt.Errorf("request ID must be set by the head node")
 	}

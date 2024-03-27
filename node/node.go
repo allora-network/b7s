@@ -3,7 +3,6 @@ package node
 import (
 	"context"
 	"fmt"
-	"github.com/RedBird96/b7s/models/execute"
 	"github.com/RedBird96/b7s/models/response"
 	"slices"
 	"sync"
@@ -50,7 +49,8 @@ type Node struct {
 
 	pbftExecuteResponse map[string]response.Execute
 	reportingPeers      map[string][]peer.ID
-	comChannel          chan execute.ResultMap
+	comChannel          chan []byte
+	topics              map[string]string
 }
 
 // New creates a new Node.
@@ -90,7 +90,7 @@ func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore
 		consensusResponses:  waitmap.New(),
 		pbftExecuteResponse: make(map[string]response.Execute),
 		reportingPeers:      make(map[string][]peer.ID),
-		comChannel:          make(chan execute.ResultMap, 1),
+		comChannel:          make(chan []byte, 1),
 	}
 
 	if cfg.LoadAttributes {
@@ -153,10 +153,6 @@ func (n *Node) getHandler(msgType string) HandlerFunc {
 			return ErrUnsupportedMessage
 		}
 	}
-}
-
-func (n *Node) CommunicatorAppLayer() chan execute.ResultMap {
-	return n.comChannel
 }
 
 func newRequestID() (string, error) {

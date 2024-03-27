@@ -133,6 +133,7 @@ func (n *Node) headExecute(ctx context.Context, requestID string, req execute.Re
 		Request:        req,
 		RequestID:      requestID,
 		ReportingPeers: reportingPeers,
+		Topic:          subgroup,
 		Timestamp:      time.Now().UTC(),
 	}
 
