@@ -104,7 +104,7 @@ func New(log zerolog.Logger, ctx context.Context, host *host.Host, peerStore Pee
 		pbftExecuteResponse: make(map[string]response.Execute),
 		reportingPeers:      make(map[string][]peer.ID),
 		room:                room,
-		pbftCh:              ch,
+		//pbftCh:              ch,
 	}
 
 	if cfg.LoadAttributes {
