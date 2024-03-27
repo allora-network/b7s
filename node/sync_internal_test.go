@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/RedBird96/b7s/models/blockless"
-	"github.com/RedBird96/b7s/testing/mocks"
+	"github.com/allora-network/b7s/models/blockless"
+	"github.com/allora-network/b7s/testing/mocks"
 )
 
 func TestNode_Sync(t *testing.T) {

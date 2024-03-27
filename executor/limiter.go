@@ -1,7 +1,7 @@
 package executor
 
 import (
-	"github.com/RedBird96/b7s/models/execute"
+	"github.com/allora-network/b7s/models/execute"
 )
 
 // noopLimiter is a dummy limiter used when processes run without any resource limitations.

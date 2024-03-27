@@ -7,7 +7,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
 
-	"github.com/RedBird96/b7s/models/blockless"
+	"github.com/allora-network/b7s/models/blockless"
 )
 
 // SendMessage sends a message directly to the specified peer, on the standard blockless protocol.

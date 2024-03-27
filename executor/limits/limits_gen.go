@@ -6,7 +6,7 @@ package limits
 import (
 	"errors"
 
-	"github.com/RedBird96/b7s/models/execute"
+	"github.com/allora-network/b7s/models/execute"
 )
 
 // NOTE: Placeholder for operating systems where we do not support limiters yet.

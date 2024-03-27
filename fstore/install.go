@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/RedBird96/b7s/models/blockless"
+	"github.com/allora-network/b7s/models/blockless"
 )
 
 // Install will download and install function identified by the manifest/CID.

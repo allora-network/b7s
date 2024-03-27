@@ -1,4 +1,4 @@
-module github.com/RedBird96/b7s
+module github.com/allora-network/b7s
 
 go 1.21.0
 

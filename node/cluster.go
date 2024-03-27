@@ -9,11 +9,11 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/rs/zerolog/log"
 
-	"github.com/RedBird96/b7s/consensus"
-	"github.com/RedBird96/b7s/models/blockless"
-	"github.com/RedBird96/b7s/models/codes"
-	"github.com/RedBird96/b7s/models/request"
-	"github.com/RedBird96/b7s/models/response"
+	"github.com/allora-network/b7s/consensus"
+	"github.com/allora-network/b7s/models/blockless"
+	"github.com/allora-network/b7s/models/codes"
+	"github.com/allora-network/b7s/models/request"
+	"github.com/allora-network/b7s/models/response"
 )
 
 func (n *Node) processFormCluster(ctx context.Context, from peer.ID, payload []byte) error {

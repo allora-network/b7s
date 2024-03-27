@@ -5,7 +5,7 @@ import (
 
 	"github.com/multiformats/go-multiaddr"
 
-	"github.com/RedBird96/b7s/models/blockless"
+	"github.com/allora-network/b7s/models/blockless"
 )
 
 // defaultConfig used to create Host.

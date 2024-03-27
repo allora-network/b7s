@@ -15,9 +15,9 @@ import (
 	libp2praft "github.com/libp2p/go-libp2p-raft"
 	"github.com/libp2p/go-libp2p/core/peer"
 
-	"github.com/RedBird96/b7s/consensus"
-	"github.com/RedBird96/b7s/host"
-	"github.com/RedBird96/b7s/models/blockless"
+	"github.com/allora-network/b7s/consensus"
+	"github.com/allora-network/b7s/host"
+	"github.com/allora-network/b7s/models/blockless"
 )
 
 type Replica struct {

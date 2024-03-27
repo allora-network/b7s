@@ -6,7 +6,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
 
-	"github.com/RedBird96/b7s/models/blockless"
+	"github.com/allora-network/b7s/models/blockless"
 )
 
 type PeerStore struct {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 
-	"github.com/RedBird96/b7s/models/execute"
+	"github.com/allora-network/b7s/models/execute"
 )
 
 // Option can be used to set PBFT configuration options.

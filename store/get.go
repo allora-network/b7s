@@ -7,7 +7,7 @@ import (
 
 	"github.com/cockroachdb/pebble"
 
-	"github.com/RedBird96/b7s/models/blockless"
+	"github.com/allora-network/b7s/models/blockless"
 )
 
 // Get retrieves the value for a key.

@@ -10,10 +10,10 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/stretchr/testify/require"
 
-	"github.com/RedBird96/b7s/api"
-	"github.com/RedBird96/b7s/models/codes"
-	"github.com/RedBird96/b7s/models/execute"
-	"github.com/RedBird96/b7s/testing/mocks"
+	"github.com/allora-network/b7s/api"
+	"github.com/allora-network/b7s/models/codes"
+	"github.com/allora-network/b7s/models/execute"
+	"github.com/allora-network/b7s/testing/mocks"
 )
 
 func TestAPI_Execute(t *testing.T) {

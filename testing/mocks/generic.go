@@ -8,9 +8,9 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/rs/zerolog"
 
-	"github.com/RedBird96/b7s/models/blockless"
-	"github.com/RedBird96/b7s/models/codes"
-	"github.com/RedBird96/b7s/models/execute"
+	"github.com/allora-network/b7s/models/blockless"
+	"github.com/allora-network/b7s/models/codes"
+	"github.com/allora-network/b7s/models/execute"
 )
 
 // Global variables that can be used for testing. They are valid non-nil values for commonly needed types.

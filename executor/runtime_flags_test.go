@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/RedBird96/b7s/models/execute"
+	"github.com/allora-network/b7s/models/execute"
 )
 
 func TestRuntimeFlags(t *testing.T) {

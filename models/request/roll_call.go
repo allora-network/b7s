@@ -3,8 +3,8 @@ package request
 import (
 	"github.com/libp2p/go-libp2p/core/peer"
 
-	"github.com/RedBird96/b7s/consensus"
-	"github.com/RedBird96/b7s/models/execute"
+	"github.com/allora-network/b7s/consensus"
+	"github.com/allora-network/b7s/models/execute"
 )
 
 // RollCall describes the `MessageRollCall` message payload.

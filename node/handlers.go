@@ -7,8 +7,8 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 
-	"github.com/RedBird96/b7s/models/codes"
-	"github.com/RedBird96/b7s/models/response"
+	"github.com/allora-network/b7s/models/codes"
+	"github.com/allora-network/b7s/models/response"
 )
 
 // TODO: peerID of the sender is a good candidate to move on to the context

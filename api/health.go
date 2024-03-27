@@ -5,7 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/RedBird96/b7s/models/response"
+	"github.com/allora-network/b7s/models/response"
 )
 
 // Execute implements the REST API endpoint for function execution.

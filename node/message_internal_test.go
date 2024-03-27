@@ -10,9 +10,9 @@ import (
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/stretchr/testify/require"
 
-	"github.com/RedBird96/b7s/host"
-	"github.com/RedBird96/b7s/models/blockless"
-	"github.com/RedBird96/b7s/testing/mocks"
+	"github.com/allora-network/b7s/host"
+	"github.com/allora-network/b7s/models/blockless"
+	"github.com/allora-network/b7s/testing/mocks"
 )
 
 func TestNode_Messaging(t *testing.T) {

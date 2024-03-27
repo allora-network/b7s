@@ -5,10 +5,10 @@ import (
 	"crypto/sha256"
 	"fmt"
 
-	"github.com/RedBird96/b7s/models/blockless"
-	"github.com/RedBird96/b7s/models/codes"
-	"github.com/RedBird96/b7s/models/execute"
-	"github.com/RedBird96/b7s/models/request"
+	"github.com/allora-network/b7s/models/blockless"
+	"github.com/allora-network/b7s/models/codes"
+	"github.com/allora-network/b7s/models/execute"
+	"github.com/allora-network/b7s/models/request"
 )
 
 // ExecuteFunction can be used to start function execution. At the moment this is used by the API server to start execution on the head node.

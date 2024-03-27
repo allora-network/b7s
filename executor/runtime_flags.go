@@ -3,7 +3,7 @@ package executor
 import (
 	"fmt"
 
-	"github.com/RedBird96/b7s/models/execute"
+	"github.com/allora-network/b7s/models/execute"
 )
 
 // runtimeFlags returns flags that can be passed to the runtime, for example by `exec.Cmd`.

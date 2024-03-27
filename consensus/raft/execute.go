@@ -7,8 +7,8 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 
-	"github.com/RedBird96/b7s/models/codes"
-	"github.com/RedBird96/b7s/models/execute"
+	"github.com/allora-network/b7s/models/codes"
+	"github.com/allora-network/b7s/models/execute"
 )
 
 func (r *Replica) Execute(from peer.ID, requestID string, timestamp time.Time, req execute.Request) (codes.Code, execute.Result, error) {

@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 
-	"github.com/RedBird96/b7s/models/codes"
-	"github.com/RedBird96/b7s/models/execute"
+	"github.com/allora-network/b7s/models/codes"
+	"github.com/allora-network/b7s/models/execute"
 )
 
 type Node interface {

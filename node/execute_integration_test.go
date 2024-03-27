@@ -14,9 +14,9 @@ import (
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/stretchr/testify/require"
 
-	"github.com/RedBird96/b7s/models/blockless"
-	"github.com/RedBird96/b7s/models/codes"
-	"github.com/RedBird96/b7s/models/response"
+	"github.com/allora-network/b7s/models/blockless"
+	"github.com/allora-network/b7s/models/codes"
+	"github.com/allora-network/b7s/models/response"
 )
 
 func TestNode_ExecuteComplete(t *testing.T) {

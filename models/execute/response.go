@@ -6,7 +6,7 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 
-	"github.com/RedBird96/b7s/models/codes"
+	"github.com/allora-network/b7s/models/codes"
 )
 
 // Result describes an execution result.

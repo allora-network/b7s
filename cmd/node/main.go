@@ -14,16 +14,16 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/ziflex/lecho/v3"
 
-	"github.com/RedBird96/b7s/api"
-	"github.com/RedBird96/b7s/config"
-	"github.com/RedBird96/b7s/executor"
-	"github.com/RedBird96/b7s/executor/limits"
-	"github.com/RedBird96/b7s/fstore"
-	"github.com/RedBird96/b7s/host"
-	"github.com/RedBird96/b7s/models/blockless"
-	"github.com/RedBird96/b7s/node"
-	"github.com/RedBird96/b7s/peerstore"
-	"github.com/RedBird96/b7s/store"
+	"github.com/allora-network/b7s/api"
+	"github.com/allora-network/b7s/config"
+	"github.com/allora-network/b7s/executor"
+	"github.com/allora-network/b7s/executor/limits"
+	"github.com/allora-network/b7s/fstore"
+	"github.com/allora-network/b7s/host"
+	"github.com/allora-network/b7s/models/blockless"
+	"github.com/allora-network/b7s/node"
+	"github.com/allora-network/b7s/peerstore"
+	"github.com/allora-network/b7s/store"
 )
 
 const (
