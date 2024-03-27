@@ -6,11 +6,11 @@ import (
 )
 
 type ChanData struct {
-	res        codes.Code        `json:"res,omitempty"`
-	functionId string            `json:"functionId,omitempty"`
-	requestId  string            `json:"requestId,omitempty"`
-	topic      string            `json:"topic,omitempty"`
-	data       execute.ResultMap `json:"data,omitempty"`
+	Res        codes.Code        `json:"res,omitempty"`
+	FunctionId string            `json:"functionId,omitempty"`
+	RequestId  string            `json:"requestId,omitempty"`
+	Topic      string            `json:"topic,omitempty"`
+	Data       execute.ResultMap `json:"data,omitempty"`
 }
 
 func (n *Node) CommunicatorAppLayer() chan []byte {
