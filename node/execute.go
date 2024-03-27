@@ -63,11 +63,11 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 			break
 		}
 		send := &ChanData{
-			res:        result,
-			functionId: res.FunctionID,
-			requestId:  res.RequestID,
-			topic:      n.topics[res.RequestID],
-			data:       out,
+			Res:        result,
+			FunctionId: res.FunctionID,
+			RequestId:  res.RequestID,
+			Topic:      n.topics[res.RequestID],
+			Data:       out,
 		}
 		payload, err := json.Marshal(send)
 		if err != nil {
