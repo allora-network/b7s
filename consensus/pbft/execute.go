@@ -118,7 +118,7 @@ func (r *Replica) execute(view uint, sequence uint, digest string) error {
 	log.Log().Msgf("Primary Peer %s", r.primaryReplicaID().String())
 	err = r.send(r.primaryReplicaID(), msg, blockless.ProtocolID)
 	if err != nil {
-		return fmt.Errorf("could not send execution response to node (target: %s, request: %s): %w", request.Origin.String(), request.ID, err)
+		return fmt.Errorf("could not send execution response to node (current: %s, target: %s, request: %s): %w", r.host.ID(), r.primaryReplicaID(), request.ID, err)
 	}
 
 	return nil

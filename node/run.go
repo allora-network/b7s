@@ -75,7 +75,6 @@ func (n *Node) Run(ctx context.Context) error {
 
 				// Skip messages we published.
 				if msg.ReceivedFrom == n.host.ID() {
-					n.log.Trace().Str("topic", name).Str("peer", msg.ReceivedFrom.String()).Str("id", msg.ID).Msg("continued with same id")
 					continue
 				}
 
