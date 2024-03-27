@@ -59,8 +59,8 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 		n.log.Debug().Str("request", res.RequestID).Str("from", from.String()).Str("function", res.FunctionID).Str("lens:", de).Msg("received execution response to primary worker")
 
 		out := n.gatherExecutionResultsPBFT(res.RequestID, n.reportingPeers[res.RequestID])
-		//bytes, _ := out.MarshalJSON()
-		//n.room.Publish(n.ctx, bytes)
+		bytes, _ := out.MarshalJSON()
+		n.room.Publish(ctx, bytes)
 		n.log.Debug().Str("Data", aggregate.Aggregate(out)[0].Result.Stdout).Msg("Published pbft response")
 		n.disbandCluster(res.RequestID, n.reportingPeers[res.RequestID])
 		n.pbftExecuteResponse = make(map[string]response.Execute)
