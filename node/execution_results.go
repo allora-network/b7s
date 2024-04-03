@@ -2,13 +2,11 @@ package node
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/rs/zerolog/log"
 
-	"github.com/allora-network/b7s/consensus/pbft"
 	"github.com/allora-network/b7s/models/execute"
 	"github.com/allora-network/b7s/models/response"
 )
@@ -22,12 +20,12 @@ func (n *Node) gatherExecutionResultsPBFT(requestID string, peers []peer.ID) exe
 	}
 
 	var (
-		count = pbft.MinClusterResults(uint(len(peers)))
-		lock  sync.Mutex
-		wg    sync.WaitGroup
+		//count = pbft.MinClusterResults(uint(len(peers)))
+		//lock  sync.Mutex
+		wg sync.WaitGroup
 
-		results                   = make(map[string]aggregatedResult)
-		out     execute.ResultMap = make(map[peer.ID]execute.Result)
+		//results                   = make(map[string]aggregatedResult)
+		out execute.ResultMap = make(map[peer.ID]execute.Result)
 	)
 
 	wg.Add(len(peers))
@@ -63,31 +61,32 @@ func (n *Node) gatherExecutionResultsPBFT(requestID string, peers []peer.ID) exe
 				return
 			}
 
-			lock.Lock()
-			defer lock.Unlock()
-
-			// Equality means same result and same timestamp.
-			reskey := fmt.Sprintf("%+#v-%s", exres.Result, res.PBFT.RequestTimestamp.String())
-			result, ok := results[reskey]
-			if !ok {
-				results[reskey] = aggregatedResult{
-					result: exres,
-					peers: []peer.ID{
-						sender,
-					},
-				}
-				return
-			}
-
-			result.peers = append(result.peers, sender)
-			if uint(len(result.peers)) >= count {
-				n.log.Info().Str("request", requestID).Int("peers", len(peers)).Uint("matching_results", count).Msg("have enough matching results")
-				//exCancel()
-
-				for _, peer := range result.peers {
-					out[peer] = result.result
-				}
-			}
+			out[sender] = exres
+			//lock.Lock()
+			//defer lock.Unlock()
+			//
+			//// Equality means same result and same timestamp.
+			//reskey := fmt.Sprintf("%+#v-%s", exres.Result, res.PBFT.RequestTimestamp.String())
+			//result, ok := results[reskey]
+			//if !ok {
+			//	results[reskey] = aggregatedResult{
+			//		result: exres,
+			//		peers: []peer.ID{
+			//			sender,
+			//		},
+			//	}
+			//	return
+			//}
+			//
+			//result.peers = append(result.peers, sender)
+			//if uint(len(result.peers)) >= count {
+			//	n.log.Info().Str("request", requestID).Int("peers", len(peers)).Uint("matching_results", count).Msg("have enough matching results")
+			//	//exCancel()
+			//
+			//	for _, peer := range result.peers {
+			//		out[peer] = result.result
+			//	}
+			//}
 		}(rp)
 	}
 

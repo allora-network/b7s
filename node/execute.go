@@ -49,18 +49,15 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 		return fmt.Errorf("could not unpack execute response: %w", err)
 	}
 	res.From = from
-
+	n.clusterLock.Lock()
 	key := executionResultKey(res.RequestID, from)
+	defer n.clusterLock.Unlock()
 	n.pbftExecuteResponse[key] = res
 	if len(n.reportingPeers[res.RequestID]) > 0 && len(n.pbftExecuteResponse) >= len(n.reportingPeers[res.RequestID])-1 {
 		out := n.gatherExecutionResultsPBFT(res.RequestID, n.reportingPeers[res.RequestID])
 		result := codes.OK
 		if len(out) == 0 {
 			result = codes.Error
-		}
-		for _, res := range out {
-			result = res.Code
-			break
 		}
 		send := &ChanData{
 			Res:        result,
@@ -75,7 +72,6 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 		}
 		n.comChannel <- payload
 		n.disbandCluster(res.RequestID, n.reportingPeers[res.RequestID])
-		n.pbftExecuteResponse = make(map[string]response.Execute)
 	}
 
 	return nil
