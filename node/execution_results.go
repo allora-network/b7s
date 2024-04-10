@@ -14,17 +14,10 @@ import (
 // gatherExecutionResultsPBFT collects execution results from a PBFT cluster. This means f+1 identical results.
 func (n *Node) gatherExecutionResultsPBFT(requestID string, peers []peer.ID) execute.ResultMap {
 
-	type aggregatedResult struct {
-		result execute.Result
-		peers  []peer.ID
-	}
-
 	var (
-		//count = pbft.MinClusterResults(uint(len(peers)))
-		//lock  sync.Mutex
-		wg sync.WaitGroup
+		lock sync.Mutex
+		wg   sync.WaitGroup
 
-		//results                   = make(map[string]aggregatedResult)
 		out execute.ResultMap = make(map[peer.ID]execute.Result)
 	)
 
@@ -41,8 +34,6 @@ func (n *Node) gatherExecutionResultsPBFT(requestID string, peers []peer.ID) exe
 			}
 
 			n.log.Info().Str("peer", sender.String()).Str("request", requestID).Msg("accounted execution response from peer")
-
-			//er := res.(response.Execute)
 
 			pub, err := sender.ExtractPublicKey()
 			if err != nil {
@@ -61,32 +52,9 @@ func (n *Node) gatherExecutionResultsPBFT(requestID string, peers []peer.ID) exe
 				return
 			}
 
+			lock.Lock()
 			out[sender] = exres
-			//lock.Lock()
-			//defer lock.Unlock()
-			//
-			//// Equality means same result and same timestamp.
-			//reskey := fmt.Sprintf("%+#v-%s", exres.Result, res.PBFT.RequestTimestamp.String())
-			//result, ok := results[reskey]
-			//if !ok {
-			//	results[reskey] = aggregatedResult{
-			//		result: exres,
-			//		peers: []peer.ID{
-			//			sender,
-			//		},
-			//	}
-			//	return
-			//}
-			//
-			//result.peers = append(result.peers, sender)
-			//if uint(len(result.peers)) >= count {
-			//	n.log.Info().Str("request", requestID).Int("peers", len(peers)).Uint("matching_results", count).Msg("have enough matching results")
-			//	//exCancel()
-			//
-			//	for _, peer := range result.peers {
-			//		out[peer] = result.result
-			//	}
-			//}
+			defer lock.Unlock()
 		}(rp)
 	}
 

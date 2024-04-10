@@ -1,6 +1,7 @@
 package pbft
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -115,6 +116,10 @@ func (r *Replica) execute(view uint, sequence uint, digest string) error {
 		return fmt.Errorf("could not sign execution request: %w", err)
 	}
 	if r.host.ID() == r.primaryReplicaID() {
+		payload, err := json.Marshal(msg)
+		if err == nil {
+			r.nodeChannel <- payload
+		}
 		return nil
 	}
 

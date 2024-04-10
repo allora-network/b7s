@@ -47,10 +47,12 @@ type Node struct {
 	executeResponses   *waitmap.WaitMap
 	consensusResponses *waitmap.WaitMap
 
-	pbftExecuteResponse map[string]response.Execute
-	reportingPeers      map[string][]peer.ID
-	comChannel          chan []byte
-	topics              map[string]string
+	pbftExecuteResponse     map[string]response.Execute
+	reportingPeers          map[string][]peer.ID
+	comChannel              chan []byte
+	topics                  map[string]string
+	pbftExecuteResponseLock sync.RWMutex
+	clusterChannel          chan []byte
 }
 
 // New creates a new Node.
@@ -92,6 +94,7 @@ func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore
 		reportingPeers:      make(map[string][]peer.ID),
 		comChannel:          make(chan []byte, 1),
 		topics:              make(map[string]string),
+		clusterChannel:      make(chan []byte, 1),
 	}
 
 	if cfg.LoadAttributes {
