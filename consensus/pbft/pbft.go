@@ -2,6 +2,7 @@ package pbft
 
 import (
 	"bufio"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -21,6 +22,8 @@ import (
 )
 
 // TODO (pbft): Request timestamp - execution exactly once, prevent multiple/out of order executions.
+
+type PostSelfFunc func(ctx context.Context, origin peer.ID, msg []byte)
 
 // Replica is a single PBFT node. Both Primary and Backup nodes are all replicas.
 type Replica struct {
@@ -44,13 +47,13 @@ type Replica struct {
 	clusterID  string
 	protocolID protocol.ID
 
-	nodeChannel chan []byte
+	selfFunc PostSelfFunc
 	// TODO (pbft): This is used for testing ATM, remove later.
 	byzantine bool
 }
 
 // NewReplica creates a new PBFT replica.
-func NewReplica(log zerolog.Logger, host *host.Host, executor blockless.Executor, peers []peer.ID, ch chan []byte, clusterID string, options ...Option) (*Replica, error) {
+func NewReplica(log zerolog.Logger, host *host.Host, executor blockless.Executor, peers []peer.ID, fc PostSelfFunc, clusterID string, options ...Option) (*Replica, error) {
 
 	total := uint(len(peers))
 
@@ -78,8 +81,8 @@ func NewReplica(log zerolog.Logger, host *host.Host, executor blockless.Executor
 		id:    host.ID(),
 		peers: peers,
 
-		nodeChannel: ch,
-		byzantine:   isByzantine(),
+		selfFunc:  fc,
+		byzantine: isByzantine(),
 	}
 
 	replica.log.Info().Strs("replicas", peerIDList(peers)).Uint("n", total).Uint("f", replica.f).Bool("byzantine", replica.byzantine).Msg("created PBFT replica")

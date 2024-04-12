@@ -26,7 +26,7 @@ func newDummyReplica(t *testing.T) *Replica {
 	host, err := host.New(logger, loopback, 0)
 	require.NoError(t, err)
 
-	replica, err := NewReplica(logger, host, executor, peers, clusterID)
+	replica, err := NewReplica(logger, host, executor, peers, nil, clusterID)
 	require.NoError(t, err)
 
 	return replica

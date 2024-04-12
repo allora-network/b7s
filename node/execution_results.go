@@ -28,7 +28,7 @@ func (n *Node) gatherExecutionResultsPBFT(requestID string, peers []peer.ID) exe
 			defer wg.Done()
 
 			key := executionResultKey(requestID, sender)
-			res, ok := n.pbftExecuteResponse[key]
+			res, ok := n.pbftExecuteResponse[requestID][key]
 			if !ok {
 				return
 			}

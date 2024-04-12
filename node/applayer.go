@@ -12,7 +12,3 @@ type ChanData struct {
 	Topic      string            `json:"topic,omitempty"`
 	Data       execute.ResultMap `json:"data,omitempty"`
 }
-
-func (n *Node) CommunicatorAppLayer() chan []byte {
-	return n.comChannel
-}

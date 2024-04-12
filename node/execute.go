@@ -42,6 +42,7 @@ func (n *Node) processExecuteResponse(ctx context.Context, from peer.ID, payload
 
 func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID, payload []byte) error {
 
+	n.pbftExecuteResponseLock.Lock()
 	// Unpack the message.
 	var res response.Execute
 	err := json.Unmarshal(payload, &res)
@@ -50,10 +51,11 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 	}
 	res.From = from
 	key := executionResultKey(res.RequestID, from)
-	n.pbftExecuteResponseLock.Lock()
-	n.pbftExecuteResponse[key] = res
-	n.pbftExecuteResponseLock.Unlock()
-	if len(n.reportingPeers[res.RequestID]) > 0 && len(n.pbftExecuteResponse) >= len(n.reportingPeers[res.RequestID]) {
+	if n.pbftExecuteResponse[res.RequestID] == nil {
+		n.pbftExecuteResponse[res.RequestID] = make(map[string]response.Execute)
+	}
+	n.pbftExecuteResponse[res.RequestID][key] = res
+	if len(n.reportingPeers[res.RequestID]) > 0 && len(n.pbftExecuteResponse[res.RequestID]) >= len(n.reportingPeers[res.RequestID]) {
 		out := n.gatherExecutionResultsPBFT(res.RequestID, n.reportingPeers[res.RequestID])
 		result := codes.OK
 		if len(out) == 0 {
@@ -70,19 +72,15 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 		if err != nil {
 			fmt.Errorf("could not pack execute response for sending application layer: %w", err)
 		}
-		n.comChannel <- payload
+		n.sendFc(payload)
+		n.pbftExecuteResponse[res.RequestID] = make(map[string]response.Execute)
 		_ = n.disbandCluster(res.RequestID, n.reportingPeers[res.RequestID])
 	}
 
+	n.pbftExecuteResponseLock.Unlock()
 	return nil
 }
 
-func (n *Node) listenClusterChannel(ctx context.Context) {
-	select {
-	case msg := <-n.clusterChannel:
-		_ = n.processExecuteResponseToPrimary(nil, n.host.ID(), msg)
-	}
-}
 func executionResultKey(requestID string, peer peer.ID) string {
 	return requestID + "/" + peer.String()
 }

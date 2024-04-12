@@ -47,16 +47,15 @@ type Node struct {
 	executeResponses   *waitmap.WaitMap
 	consensusResponses *waitmap.WaitMap
 
-	pbftExecuteResponse     map[string]response.Execute
+	pbftExecuteResponse     map[string]map[string]response.Execute
 	reportingPeers          map[string][]peer.ID
-	comChannel              chan []byte
+	sendFc                  blockless.SendResponseFunc
 	topics                  map[string]string
 	pbftExecuteResponseLock sync.RWMutex
-	clusterChannel          chan []byte
 }
 
 // New creates a new Node.
-func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore, options ...Option) (*Node, error) {
+func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore, fc blockless.SendResponseFunc, options ...Option) (*Node, error) {
 
 	// Initialize config.
 	cfg := DefaultConfig
@@ -90,11 +89,10 @@ func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore
 		clusters:            make(map[string]consensusExecutor),
 		executeResponses:    waitmap.New(),
 		consensusResponses:  waitmap.New(),
-		pbftExecuteResponse: make(map[string]response.Execute),
+		pbftExecuteResponse: make(map[string]map[string]response.Execute),
 		reportingPeers:      make(map[string][]peer.ID),
-		comChannel:          make(chan []byte, 1),
 		topics:              make(map[string]string),
-		clusterChannel:      make(chan []byte, 1),
+		sendFc:              fc,
 	}
 
 	if cfg.LoadAttributes {

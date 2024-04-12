@@ -118,7 +118,7 @@ func (r *Replica) execute(view uint, sequence uint, digest string) error {
 	if r.host.ID() == r.primaryReplicaID() {
 		payload, err := json.Marshal(msg)
 		if err == nil {
-			r.nodeChannel <- payload
+			r.selfFunc(nil, r.host.ID(), payload)
 		}
 		return nil
 	}

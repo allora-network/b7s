@@ -92,19 +92,22 @@ func (n *Node) createPBFTCluster(ctx context.Context, from peer.ID, fc request.F
 		n.executeResponses.Set(requestID, result)
 	}
 
+	sendItSelf := func(ctx context.Context, origin peer.ID, msg []byte) {
+		n.processExecuteResponseToPrimary(ctx, origin, msg)
+	}
+
 	ph, err := pbft.NewReplica(
 		n.log,
 		n.host,
 		n.executor,
 		fc.Peers,
-		n.clusterChannel,
+		sendItSelf,
 		fc.RequestID,
 		pbft.WithPostProcessors(cacheFn),
 	)
 	if err != nil {
 		return fmt.Errorf("could not create PBFT node: %w", err)
 	}
-
 	n.clusterLock.Lock()
 	n.clusters[fc.RequestID] = ph
 	n.clusterLock.Unlock()

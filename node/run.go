@@ -49,8 +49,6 @@ func (n *Node) Run(ctx context.Context) error {
 	// Start the function sync in the background to periodically check functions.
 	go n.runSyncLoop(ctx)
 
-	go n.listenClusterChannel(ctx)
-
 	n.log.Info().Uint("concurrency", n.cfg.Concurrency).Msg("starting node main loop")
 
 	var workers sync.WaitGroup
