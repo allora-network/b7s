@@ -47,11 +47,11 @@ type Node struct {
 	executeResponses   *waitmap.WaitMap
 	consensusResponses *waitmap.WaitMap
 
-	pbftExecuteResponse     map[string]map[string]response.Execute
-	reportingPeers          map[string][]peer.ID
-	sendFc                  blockless.SendResponseFunc
-	topics                  map[string]string
-	pbftExecuteResponseLock sync.RWMutex
+	consensusExecuteResponse     map[string]map[string]response.Execute
+	reportingPeers               map[string][]peer.ID
+	sendFc                       blockless.SendResponseFunc
+	topics                       map[string]string
+	consensusExecuteResponseLock sync.RWMutex
 }
 
 // New creates a new Node.
@@ -85,14 +85,14 @@ func New(log zerolog.Logger, host *host.Host, peerStore PeerStore, fstore FStore
 		sema:      make(chan struct{}, cfg.Concurrency),
 		subgroups: subgroups,
 
-		rollCall:            newQueue(rollCallQueueBufferSize),
-		clusters:            make(map[string]consensusExecutor),
-		executeResponses:    waitmap.New(),
-		consensusResponses:  waitmap.New(),
-		pbftExecuteResponse: make(map[string]map[string]response.Execute),
-		reportingPeers:      make(map[string][]peer.ID),
-		topics:              make(map[string]string),
-		sendFc:              fc,
+		rollCall:                 newQueue(rollCallQueueBufferSize),
+		clusters:                 make(map[string]consensusExecutor),
+		executeResponses:         waitmap.New(),
+		consensusResponses:       waitmap.New(),
+		consensusExecuteResponse: make(map[string]map[string]response.Execute),
+		reportingPeers:           make(map[string][]peer.ID),
+		topics:                   make(map[string]string),
+		sendFc:                   fc,
 	}
 
 	if cfg.LoadAttributes {

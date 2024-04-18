@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/allora-network/b7s/consensus/pbft"
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -77,15 +78,16 @@ func (n *Node) headExecute(ctx context.Context, requestID string, req execute.Re
 	// Create a logger with relevant context.
 	log := n.log.With().Str("request", requestID).Str("function", req.FunctionID).Int("node_count", nodeCount).Logger()
 
-	consensusAlgo, err := parseConsensusAlgorithm(req.Config.ConsensusAlgorithm)
-	if err != nil {
-		log.Error().Str("value", req.Config.ConsensusAlgorithm).Str("default", n.cfg.DefaultConsensus.String()).Err(err).Msg("could not parse consensus algorithm from the user request, using default")
-		consensusAlgo = n.cfg.DefaultConsensus
-	}
+	consensusAlgo := consensus.PBFT
+	//consensusAlgo, err := parseConsensusAlgorithm(req.Config.ConsensusAlgorithm)
+	//if err != nil {
+	//	log.Error().Str("value", req.Config.ConsensusAlgorithm).Str("default", n.cfg.DefaultConsensus.String()).Err(err).Msg("could not parse consensus algorithm from the user request, using default")
+	//	consensusAlgo = n.cfg.DefaultConsensus
+	//}
 
-	if consensusRequired(consensusAlgo) {
-		log = log.With().Str("consensus", consensusAlgo.String()).Logger()
-	}
+	//if consensusRequired(consensusAlgo) {
+	//	log = log.With().Str("consensus", consensusAlgo.String()).Logger()
+	//}
 
 	log.Info().Msg("processing execution request")
 
@@ -98,6 +100,10 @@ func (n *Node) headExecute(ctx context.Context, requestID string, req execute.Re
 		}
 
 		return code, nil, execute.Cluster{}, fmt.Errorf("could not roll call peers (request: %s): %w", requestID, err)
+	}
+
+	if len(reportingPeers) < pbft.MinimumReplicaCount {
+		consensusAlgo = consensus.Raft
 	}
 
 	cluster := execute.Cluster{
@@ -168,7 +174,8 @@ func (n *Node) headExecute(ctx context.Context, requestID string, req execute.Re
 		return retcode, nil, cluster, nil
 	}
 
-	results = n.gatherExecutionResults(ctx, requestID, reportingPeers)
+	//defer n.disbandCluster(requestID, reportingPeers)
+	//results = n.gatherExecutionResults(ctx, requestID, reportingPeers)
 
 	log.Info().Int("cluster_size", len(reportingPeers)).Int("responded", len(results)).Msg("received execution responses")
 
@@ -183,7 +190,6 @@ func (n *Node) headExecute(ctx context.Context, requestID string, req execute.Re
 		log.Warn().Float64("expected", threshold).Float64("have", respondRatio).Msg("threshold condition not met")
 		retcode = codes.PartialContent
 	}
-
 	return retcode, results, cluster, nil
 }
 

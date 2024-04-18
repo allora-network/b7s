@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/allora-network/b7s/consensus"
 	"time"
 
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -57,12 +58,18 @@ func (n *Node) workerProcessExecute(ctx context.Context, from peer.ID, payload [
 		Type:      blockless.MessageExecuteResponse,
 		Code:      code,
 		RequestID: requestID,
+		From:      n.host.ID(),
 		Results: execute.ResultMap{
 			n.host.ID(): result,
 		},
 	}
 
 	// Send the response, whatever it may be (success or failure).
+	cons, _ := parseConsensusAlgorithm(req.Config.ConsensusAlgorithm)
+	if cons == consensus.Raft {
+		msg, _ := json.Marshal(result)
+		_ = n.processExecuteResponse(ctx, n.host.ID(), msg)
+	}
 	err = n.send(ctx, req.From, res)
 	if err != nil {
 		return fmt.Errorf("could not send response: %w", err)

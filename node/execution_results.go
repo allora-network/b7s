@@ -8,7 +8,6 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/allora-network/b7s/models/execute"
-	"github.com/allora-network/b7s/models/response"
 )
 
 // gatherExecutionResultsPBFT collects execution results from a PBFT cluster. This means f+1 identical results.
@@ -28,7 +27,7 @@ func (n *Node) gatherExecutionResultsPBFT(requestID string, peers []peer.ID) exe
 			defer wg.Done()
 
 			key := executionResultKey(requestID, sender)
-			res, ok := n.pbftExecuteResponse[requestID][key]
+			res, ok := n.consensusExecuteResponse[requestID][key]
 			if !ok {
 				return
 			}
@@ -66,10 +65,6 @@ func (n *Node) gatherExecutionResultsPBFT(requestID string, peers []peer.ID) exe
 // gatherExecutionResults collects execution results from direct executions or raft clusters.
 func (n *Node) gatherExecutionResults(ctx context.Context, requestID string, peers []peer.ID) execute.ResultMap {
 
-	// We're willing to wait for a limited amount of time.
-	exctx, exCancel := context.WithTimeout(ctx, n.cfg.ExecutionTimeout)
-	defer exCancel()
-
 	var (
 		results execute.ResultMap = make(map[peer.ID]execute.Result)
 		reslock sync.Mutex
@@ -85,16 +80,14 @@ func (n *Node) gatherExecutionResults(ctx context.Context, requestID string, pee
 		go func() {
 			defer wg.Done()
 			key := executionResultKey(requestID, rp)
-			res, ok := n.executeResponses.WaitFor(exctx, key)
+			res, ok := n.consensusExecuteResponse[requestID][key]
 			if !ok {
 				return
 			}
 
 			n.log.Info().Str("peer", rp.String()).Msg("accounted execution response from peer")
 
-			er := res.(response.Execute)
-
-			exres, ok := er.Results[rp]
+			exres, ok := res.Results[rp]
 			if !ok {
 				return
 			}

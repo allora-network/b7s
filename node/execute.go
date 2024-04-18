@@ -23,7 +23,7 @@ func (n *Node) processExecute(ctx context.Context, from peer.ID, payload []byte)
 }
 
 func (n *Node) processExecuteResponse(ctx context.Context, from peer.ID, payload []byte) error {
-
+	n.consensusExecuteResponseLock.Lock()
 	// Unpack the message.
 	var res response.Execute
 	err := json.Unmarshal(payload, &res)
@@ -36,13 +36,33 @@ func (n *Node) processExecuteResponse(ctx context.Context, from peer.ID, payload
 
 	key := executionResultKey(res.RequestID, from)
 	n.executeResponses.Set(key, res)
+	if n.isHead() {
+		return nil
+	}
 
+	result := n.gatherExecutionResults(ctx, from.String(), []peer.ID{from})
+	if len(result) > 0 {
+		send := &ChanData{
+			Res:        codes.OK,
+			FunctionId: res.FunctionID,
+			RequestId:  res.RequestID,
+			Topic:      n.topics[res.RequestID],
+			Data:       result,
+		}
+		payload, err = json.Marshal(send)
+		if err != nil {
+			fmt.Errorf("could not pack execute response for sending application layer: %w", err)
+		}
+		n.sendFc(payload)
+	}
+	defer n.disbandCluster(res.RequestID, []peer.ID{from})
+	n.consensusExecuteResponseLock.Unlock()
 	return nil
 }
 
 func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID, payload []byte) error {
 
-	n.pbftExecuteResponseLock.Lock()
+	n.consensusExecuteResponseLock.Lock()
 	// Unpack the message.
 	var res response.Execute
 	err := json.Unmarshal(payload, &res)
@@ -51,11 +71,11 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 	}
 	res.From = from
 	key := executionResultKey(res.RequestID, from)
-	if n.pbftExecuteResponse[res.RequestID] == nil {
-		n.pbftExecuteResponse[res.RequestID] = make(map[string]response.Execute)
+	if n.consensusExecuteResponse[res.RequestID] == nil {
+		n.consensusExecuteResponse[res.RequestID] = make(map[string]response.Execute)
 	}
-	n.pbftExecuteResponse[res.RequestID][key] = res
-	if len(n.reportingPeers[res.RequestID]) > 0 && len(n.pbftExecuteResponse[res.RequestID]) >= len(n.reportingPeers[res.RequestID]) {
+	n.consensusExecuteResponse[res.RequestID][key] = res
+	if len(n.reportingPeers[res.RequestID]) > 0 && len(n.consensusExecuteResponse[res.RequestID]) >= len(n.reportingPeers[res.RequestID]) {
 		out := n.gatherExecutionResultsPBFT(res.RequestID, n.reportingPeers[res.RequestID])
 		result := codes.OK
 		if len(out) == 0 {
@@ -73,11 +93,11 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 			fmt.Errorf("could not pack execute response for sending application layer: %w", err)
 		}
 		n.sendFc(payload)
-		n.pbftExecuteResponse[res.RequestID] = make(map[string]response.Execute)
+		n.consensusExecuteResponse[res.RequestID] = make(map[string]response.Execute)
 		_ = n.disbandCluster(res.RequestID, n.reportingPeers[res.RequestID])
 	}
 
-	n.pbftExecuteResponseLock.Unlock()
+	n.consensusExecuteResponseLock.Unlock()
 	return nil
 }
 
