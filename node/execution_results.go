@@ -35,16 +35,18 @@ func (n *Node) gatherExecutionResultsConsensus(requestID string, peers []peer.ID
 
 			n.log.Info().Str("peer", sender.String()).Str("request", requestID).Msg("accounted execution response from peer")
 
-			pub, err := sender.ExtractPublicKey()
-			if err != nil {
-				log.Error().Err(err).Msg("could not derive public key from peer ID")
-				return
-			}
+			if len(res.Signature) > 0 {
+				pub, err := sender.ExtractPublicKey()
+				if err != nil {
+					log.Error().Err(err).Msg("could not derive public key from peer ID")
+					return
+				}
 
-			err = res.VerifySignature(pub)
-			if err != nil {
-				log.Error().Err(err).Msg("could not verify signature of an execution response")
-				return
+				err = res.VerifySignature(pub)
+				if err != nil {
+					log.Error().Err(err).Msg("could not verify signature of an execution response")
+					return
+				}
 			}
 
 			exres, ok := res.Results[sender]

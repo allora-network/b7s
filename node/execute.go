@@ -49,9 +49,13 @@ func (n *Node) processExecuteResponseRaft(ctx context.Context, from peer.ID, pay
 	n.log.Debug().Str("request", res.RequestID).Str("from", from.String()).Msg("received execution response")
 
 	key := executionResultKey(res.RequestID, from)
-	n.executeResponses.Set(key, res)
 
-	result := n.gatherExecutionResultsConsensus(from.String(), []peer.ID{from})
+	if n.consensusExecuteResponse[res.RequestID] == nil {
+		n.consensusExecuteResponse[res.RequestID] = make(map[string]response.Execute)
+	}
+	n.consensusExecuteResponse[res.RequestID][key] = res
+
+	result := n.gatherExecutionResultsConsensus(res.RequestID, []peer.ID{from})
 	if len(result) > 0 {
 		send := &ChanData{
 			Res:        codes.OK,
@@ -65,8 +69,9 @@ func (n *Node) processExecuteResponseRaft(ctx context.Context, from peer.ID, pay
 			fmt.Errorf("could not pack execute response for sending application layer: %w", err)
 		}
 		n.sendFc(payload)
+		n.consensusExecuteResponse[res.RequestID] = make(map[string]response.Execute)
+		_ = n.disbandCluster(res.RequestID, []peer.ID{from})
 	}
-	defer n.disbandCluster(res.RequestID, []peer.ID{from})
 	n.consensusExecuteResponseLock.Unlock()
 	return nil
 }
@@ -92,6 +97,7 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 		if len(out) == 0 {
 			result = codes.Error
 		}
+
 		send := &ChanData{
 			Res:        result,
 			FunctionId: res.FunctionID,
