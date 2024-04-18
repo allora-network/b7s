@@ -104,7 +104,9 @@ func (n *Node) headExecute(ctx context.Context, requestID string, req execute.Re
 
 	if len(reportingPeers) < pbft.MinimumReplicaCount {
 		consensusAlgo = consensus.Raft
+		log.Info().Msg("Set consensus as RAFT")
 	}
+	req.Config.ConsensusAlgorithm = consensusAlgo.String()
 
 	cluster := execute.Cluster{
 		Peers: reportingPeers,
@@ -156,41 +158,42 @@ func (n *Node) headExecute(ctx context.Context, requestID string, req execute.Re
 		return codes.Error, nil, cluster, fmt.Errorf("could not send execution request to peers (function: %s, request: %s): %w", req.FunctionID, requestID, err)
 	}
 
-	log.Debug().Msg("waiting for execution responses")
+	log.Debug().Msg("sent request to workers")
+	retcode := codes.OK
+	return retcode, nil, cluster, nil
+	//
 
-	var results execute.ResultMap
-	if consensusAlgo == consensus.PBFT {
-		//results = n.gatherExecutionResultsPBFT_Remove(ctx, requestID, reportingPeers)
+	//var results execute.ResultMap
+	//if consensusAlgo == consensus.PBFT {
+	//results = n.gatherExecutionResultsPBFT_Remove(ctx, requestID, reportingPeers)
 
-		log.Info().Msg("received PBFT execution responses")
+	//log.Info().Msg("received PBFT execution responses")
 
-		retcode := codes.OK
-		// Use the return code from the execution as the return code.
-		//for _, res := range results {
-		//	retcode = res.Code
-		//	break
-		//}
+	// Use the return code from the execution as the return code.
+	//for _, res := range results {
+	//	retcode = res.Code
+	//	break
+	//}
 
-		return retcode, nil, cluster, nil
-	}
+	//}
 
 	//defer n.disbandCluster(requestID, reportingPeers)
 	//results = n.gatherExecutionResults(ctx, requestID, reportingPeers)
 
-	log.Info().Int("cluster_size", len(reportingPeers)).Int("responded", len(results)).Msg("received execution responses")
-
-	// How many results do we have, and how many do we expect.
-	respondRatio := float64(len(results)) / float64(len(reportingPeers))
-	threshold := determineThreshold(req)
-
-	retcode := codes.OK
-	if respondRatio == 0 {
-		retcode = codes.NoContent
-	} else if respondRatio < threshold {
-		log.Warn().Float64("expected", threshold).Float64("have", respondRatio).Msg("threshold condition not met")
-		retcode = codes.PartialContent
-	}
-	return retcode, results, cluster, nil
+	//log.Info().Int("cluster_size", len(reportingPeers)).Int("responded", len(results)).Msg("received execution responses")
+	//
+	//// How many results do we have, and how many do we expect.
+	//respondRatio := float64(len(results)) / float64(len(reportingPeers))
+	//threshold := determineThreshold(req)
+	//
+	//retcode := codes.OK
+	//if respondRatio == 0 {
+	//	retcode = codes.NoContent
+	//} else if respondRatio < threshold {
+	//	log.Warn().Float64("expected", threshold).Float64("have", respondRatio).Msg("threshold condition not met")
+	//	retcode = codes.PartialContent
+	//}
+	//return retcode, results, cluster, nil
 }
 
 func determineThreshold(req execute.Request) float64 {
