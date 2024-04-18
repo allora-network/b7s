@@ -23,6 +23,20 @@ func (n *Node) processExecute(ctx context.Context, from peer.ID, payload []byte)
 }
 
 func (n *Node) processExecuteResponse(ctx context.Context, from peer.ID, payload []byte) error {
+	// Unpack the message.
+	var res response.Execute
+	err := json.Unmarshal(payload, &res)
+	if err != nil {
+		return fmt.Errorf("could not unpack execute response: %w", err)
+	}
+	res.From = from
+
+	key := executionResultKey(res.RequestID, from)
+	n.executeResponses.Set(key, res)
+	return nil
+}
+
+func (n *Node) processExecuteResponseRaft(ctx context.Context, from peer.ID, payload []byte) error {
 	n.consensusExecuteResponseLock.Lock()
 	// Unpack the message.
 	var res response.Execute
@@ -36,11 +50,8 @@ func (n *Node) processExecuteResponse(ctx context.Context, from peer.ID, payload
 
 	key := executionResultKey(res.RequestID, from)
 	n.executeResponses.Set(key, res)
-	if n.isHead() {
-		return nil
-	}
 
-	result := n.gatherExecutionResults(ctx, from.String(), []peer.ID{from})
+	result := n.gatherExecutionResultsConsensus(from.String(), []peer.ID{from})
 	if len(result) > 0 {
 		send := &ChanData{
 			Res:        codes.OK,
@@ -76,7 +87,7 @@ func (n *Node) processExecuteResponseToPrimary(ctx context.Context, from peer.ID
 	}
 	n.consensusExecuteResponse[res.RequestID][key] = res
 	if len(n.reportingPeers[res.RequestID]) > 0 && len(n.consensusExecuteResponse[res.RequestID]) >= len(n.reportingPeers[res.RequestID]) {
-		out := n.gatherExecutionResultsPBFT(res.RequestID, n.reportingPeers[res.RequestID])
+		out := n.gatherExecutionResultsConsensus(res.RequestID, n.reportingPeers[res.RequestID])
 		result := codes.OK
 		if len(out) == 0 {
 			result = codes.Error

@@ -68,7 +68,7 @@ func (n *Node) workerProcessExecute(ctx context.Context, from peer.ID, payload [
 	cons, _ := parseConsensusAlgorithm(req.Config.ConsensusAlgorithm)
 	if cons == consensus.Raft {
 		msg, _ := json.Marshal(result)
-		_ = n.processExecuteResponse(ctx, n.host.ID(), msg)
+		_ = n.processExecuteResponseRaft(ctx, n.host.ID(), msg)
 	}
 	err = n.send(ctx, req.From, res)
 	if err != nil {

@@ -2,6 +2,7 @@ package node
 
 import (
 	"context"
+	"github.com/allora-network/b7s/models/response"
 	"sync"
 
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -11,7 +12,7 @@ import (
 )
 
 // gatherExecutionResultsPBFT collects execution results from a PBFT cluster. This means f+1 identical results.
-func (n *Node) gatherExecutionResultsPBFT(requestID string, peers []peer.ID) execute.ResultMap {
+func (n *Node) gatherExecutionResultsConsensus(requestID string, peers []peer.ID) execute.ResultMap {
 
 	var (
 		lock sync.Mutex
@@ -64,6 +65,9 @@ func (n *Node) gatherExecutionResultsPBFT(requestID string, peers []peer.ID) exe
 
 // gatherExecutionResults collects execution results from direct executions or raft clusters.
 func (n *Node) gatherExecutionResults(ctx context.Context, requestID string, peers []peer.ID) execute.ResultMap {
+	// We're willing to wait for a limited amount of time.
+	exctx, exCancel := context.WithTimeout(ctx, n.cfg.ExecutionTimeout)
+	defer exCancel()
 
 	var (
 		results execute.ResultMap = make(map[peer.ID]execute.Result)
@@ -80,14 +84,17 @@ func (n *Node) gatherExecutionResults(ctx context.Context, requestID string, pee
 		go func() {
 			defer wg.Done()
 			key := executionResultKey(requestID, rp)
-			res, ok := n.consensusExecuteResponse[requestID][key]
+			res, ok := n.executeResponses.WaitFor(exctx, key)
+
 			if !ok {
 				return
 			}
 
 			n.log.Info().Str("peer", rp.String()).Msg("accounted execution response from peer")
 
-			exres, ok := res.Results[rp]
+			er := res.(response.Execute)
+
+			exres, ok := er.Results[rp]
 			if !ok {
 				return
 			}
