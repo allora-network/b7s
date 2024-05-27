@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 ubuntu:latest 
+FROM ubuntu:latest 
 
 WORKDIR /app
 
