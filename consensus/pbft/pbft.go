@@ -134,7 +134,7 @@ func (r *Replica) setPBFTMessageHandler() {
 			return
 		}
 
-		r.log.Debug().Str("peer", from.String()).Msg("received message")
+		r.log.Debug().Str("peer", from.String()).Str("msg", string(msg)).Msg("received message")
 
 		err = r.processMessage(from, msg)
 		if err != nil {
