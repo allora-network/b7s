@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	DefaultTopic                   = "blockless/b7s/general"
+	DefaultTopic                   = "blockless/b7s/general/allora"
 	DefaultHealthInterval          = 1 * time.Minute
 	DefaultRollCallTimeout         = 5 * time.Second
 	DefaultExecutionTimeout        = 20 * time.Second
