@@ -1,3 +1,24 @@
+# Deprecation Notice
+
+🚨 **This repository is deprecated and no longer maintained.** 🚨
+
+This project is no longer actively developed or maintained. We recommend using [allora-offchain-node](https://github.com/allora-network/allora-offchain-node) as a replacement.
+
+## Why is this project deprecated?
+
+The architecture has been improved and simplified, and heads and workers supported by this project are are not compatible. 
+
+
+## What should you do?
+
+- **Switch to allora-offchain-node**: [allora-offchain-node](https://github.com/allora-network/allora-offchain-node)
+- **Read the Docs**: Refer to docs on architecture (and workers specifically) on [Allora Network Docs](https://docs.allora.network/).
+
+
+Thank you to everyone who contributed to this project.
+
+
+
 [![Coverage](https://img.shields.io/badge/Coverage-64.5%25-yellow)](https://img.shields.io/badge/Coverage-64.5%25-yellow)
 [![Go Report Card](https://goreportcard.com/badge/github.com/blocklessnetwork/b7s)](https://goreportcard.com/report/github.com/blocklessnetwork/b7s) 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/blocklessnetwork/b7s/blob/main/LICENSE.md) 
